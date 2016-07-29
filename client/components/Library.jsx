@@ -47,15 +47,14 @@ class Library extends React.Component {
                 {this.state.filenames.map(file => <tr>{file}</tr>)}
               </td>
             </tr>
-            <tr>
-              <div className="landing-drop-text landing-circle">
-                Drop Your Video File Here
-                <input type="file" id="files" className="landing-circle drop-box" name="file" onChange={this.setFileAndUpdateLibrary.bind(this)} />
-              </div>
-            </tr>
           </tbody>
         </table>
         
+        <div className="library-drop-text library-circle">
+          Drop Your Video File Here
+          <input type="file" id="files" className="library-circle library-drop-box" name="file" onChange={this.setFileAndUpdateLibrary.bind(this)} />
+        </div>
+
       </div>
     );
   }
