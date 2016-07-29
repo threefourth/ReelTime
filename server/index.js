@@ -15,6 +15,12 @@ const EXPRESS_PORT = 3000;
 app.use(express.static(`${__dirname}/../client`));
 
 
+
+// var filenames = ['My Neighbor Totoro', 'Spirited Away'];
+var filenames = ['My Neighbor Totoro'];
+
+
+
 // Socket.io
 io.on('connection', (socket) => {
   console.log('A user connected with socket id', socket.id);
@@ -27,13 +33,27 @@ io.on('connection', (socket) => {
     socket.join(room);
   });
 
+
+
+
+  // Add filename to array when new media is added
+  socket.on('add media', (media) => {
+    filenames.push(media);
+  });
+
+  socket.on('request files', () => {
+    socket.emit('send files', filenames);
+  });
+
+
+
+
   // Chat messaging events
   socket.on('chat message', (msg, roomId) => {
     console.log('MSG: ', msg);
     console.log('RoomID: ', roomId);
 
     socket.to(roomId).broadcast.emit('chat message', msg);
-    // socket.broadcast.emit('chat message', msg);
   });
 
   // Video sync events

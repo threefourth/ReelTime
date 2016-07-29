@@ -2,6 +2,7 @@ import React from "react";
 
 import Landing from './Landing';
 import Link from './Link';
+import Library from "./Library.jsx";
 import Video from "./Video.jsx";
 import ChatSpace from "./ChatSpace.jsx";
 
@@ -37,10 +38,12 @@ class App extends React.Component {
   }
 
   setFile(e) {
+    this.props.socket.emit('add media', e.target.files[0].name);
+
     this.setState({
       file: e.target.files[0],
       showLanding: false,
-      showBody: true,
+      showBody: true
     });
   }
 
@@ -94,6 +97,7 @@ class App extends React.Component {
         {this.state.showLanding ? <Landing setFile={this.setFile} /> : null}
         {this.state.showLink ? <Link myId={this.state.myId} /> : null}
         {this.state.showBody ? <div className="wrapper">
+          <Library socket={this.props.socket} setFile={this.setFile}/>
           <Video socket={this.props.socket} />
           <ChatSpace socket={this.props.socket} isSource={this.state.isSource} peerId={this.state.peerId} />
         </div> : null}

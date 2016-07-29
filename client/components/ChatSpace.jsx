@@ -16,6 +16,10 @@ class ChatSpace extends React.Component {
       ],
     };
 
+    this.props.socket.on('add media', (media) => {
+      console.log('Received media in ChatSpace.jsx', media);
+    });
+
     // If source, create room using myId
     if (!this.props.peerId) {
       getMyId().then((myId) => {
