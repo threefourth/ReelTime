@@ -19,11 +19,17 @@ class Media extends React.Component {
     //   media.className += ' video-reveal';
     //   setTimeout(() => { media.className = 'video'; }, 2000);
     // });
-  }
+    
+    let media = document.querySelector(`.${this.fileType}`);
 
-  emitPlayAndListenForPause(e) {
-    const media = e.target;
-    this.props.socket.emit('play', media.currentTime);
+    this.props.socket.on('play', (otherTime) => {
+      if (Math.floor(media.currentTime) > Math.floor(otherTime) + 0.5 ||
+          Math.floor(media.currentTime) < Math.floor(otherTime) - 0.5) {
+        media.currentTime = otherTime;
+      }
+      media.play();
+    });
+
     this.props.socket.on('pause', (otherTime) => {
       if (Math.floor(media.currentTime) > Math.floor(otherTime) + 0.5 ||
           Math.floor(media.currentTime) < Math.floor(otherTime) - 0.5) {
@@ -33,20 +39,34 @@ class Media extends React.Component {
     });
   }
 
+  emitPlayAndListenForPause(e) {
+    console.log('emitPlayAndListenForPause invoked!');
+    const media = e.target;
+    this.props.socket.emit('play', media.currentTime);
+    // this.props.socket.on('pause', (otherTime) => {
+    //   if (Math.floor(media.currentTime) > Math.floor(otherTime) + 0.5 ||
+    //       Math.floor(media.currentTime) < Math.floor(otherTime) - 0.5) {
+    //     media.currentTime = otherTime;
+    //   }
+    //   media.pause();
+    // });
+  }
+
   emitPauseAndListenForPlay(e) {
+    console.log('emitPauseAndListenForPlay invoked!');
     const media = e.target;
     this.props.socket.emit('pause', media.currentTime);
-    this.props.socket.on('play', (otherTime) => {
-      if (Math.floor(media.currentTime) > Math.floor(otherTime) + 0.5 ||
-          Math.floor(media.currentTime) < Math.floor(otherTime) - 0.5) {
-        media.currentTime = otherTime;
-      }
-      media.play();
-    });
+    // this.props.socket.on('play', (otherTime) => {
+    //   if (Math.floor(media.currentTime) > Math.floor(otherTime) + 0.5 ||
+    //       Math.floor(media.currentTime) < Math.floor(otherTime) - 0.5) {
+    //     media.currentTime = otherTime;
+    //   }
+    //   media.play();
+    // });
   }
 
   render() {
-    var mediaTag;
+    let mediaTag;
     if (this.fileType === 'video') {
       mediaTag = 
         <div className="video-container">
@@ -66,8 +86,8 @@ class Media extends React.Component {
         <div className="audio-container">
           <div className="audio-border"></div>
           <audio
-            // onPlay={this.emitPlayAndListenForPause}
-            // onPause={this.emitPauseAndListenForPlay}
+            onPlay={this.emitPlayAndListenForPause}
+            onPause={this.emitPauseAndListenForPlay}
             className="audio"
             controls
           >

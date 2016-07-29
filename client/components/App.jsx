@@ -130,7 +130,7 @@ class App extends React.Component {
           // // Append each received ArrayBuffer to the local MediaSource
           // const video = document.querySelector('.video');          
           // appendChunk(data, video);
-          // 
+           
           const audio = document.querySelector('.audio');
           if (data.constructor === ArrayBuffer) {
             const dataView = new Uint8Array(data);
