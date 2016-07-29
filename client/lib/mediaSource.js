@@ -43,7 +43,7 @@ function onSourceOpen(e) {
   sourceBuffer.addEventListener('update', () => { appendNextMediaSegment(mediaSrc); });
   sourceBuffer.appendBuffer(initSegment);
 }
-
+  
 function appendNextMediaSegment(mediaSrc) {
   if (mediaSrc.readyState === "closed" || mediaSrc.sourceBuffers[0].updating) {
     return;

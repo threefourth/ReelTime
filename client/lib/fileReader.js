@@ -4,6 +4,7 @@ const BLOB_SIZE = 16384;
 // Repeatedly invokes the specified callback when each successive chunk is read (as an ArrayBuffer).
 function readFile(file, callback, offset = 0) {
   const reader = new window.FileReader();
+  console.log('file size is', file.size);
 
   reader.onload = (e) => {
     callback(e.target.result);

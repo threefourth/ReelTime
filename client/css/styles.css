@@ -240,3 +240,28 @@ form {
 #link-url {
   font-weight: 400;
 }
+
+.drop-text {
+  color: white;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 80vh;
+  font-size: 5vh;
+}
+
+.drop-circle {
+  width: 80vh;
+  height: 80vh;
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  border-radius: 59%;
+  background-color: rgba(224,122,122,0.4);
+  color: #ccc;
+  margin: auto;
+}
+
+.drop-input {
+  position: absolute;
+  left: 50px;
+  bottom: 50px;
+}

@@ -15,7 +15,7 @@ class VideoChat extends React.Component {
 
   componentDidMount() {
     const constraints = {
-      audio: true,
+      audio: false,
       video: true,
     };
 

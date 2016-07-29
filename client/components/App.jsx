@@ -2,31 +2,41 @@ import React from "react";
 
 import Landing from './Landing';
 import Link from './Link';
+
 import Library from "./Library.jsx";
 import Main from "./Main.jsx";
 // import Video from "./Video.jsx";
-import ChatSpace from "./ChatSpace.jsx";
+
+import Media from './Media';
+import ChatSpace from './ChatSpace';
+
 
 import { getMyId, establishPeerConnection } from '../lib/webrtc';
 import readFile from '../lib/fileReader';
 import appendChunk from '../lib/mediaSource';
 
+import { readAudioFile, decodeSong } from '../lib/audioSource';
+
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.setFile = this.setFile.bind(this);
+    this.startApp = this.startApp.bind(this);
+    this.sendVideo = this.sendVideo.bind(this);
+    this.sendAudio = this.sendAudio.bind(this);
 
     const params = new URLSearchParams(location.search.slice(1));
     const isSource = !params.has('id');
 
     this.state = {
       isSource,
-      file: null,
+      file: {type: 'audio/mp3'},
       myId: null,
       peerId: params.get('id'),
       showLanding: isSource,
       showLink: isSource,
       showBody: !isSource,
+      conn: null
     };
   }
 
@@ -39,19 +49,50 @@ class App extends React.Component {
   }
 
   setFile(e) {
-    // this.props.socket.emit('add media', e.target.files[0].name);
-    var filename = e.target.files[0].name; 
-    var filetype = e.target.files[0].type; // video/mp4 => video
+    const file = e.target.files[0];
 
-    filetype = filetype.slice(0, filetype.indexOf('/'))
-
+    // Start: Jeff and Joann's code
+    const filename = file.name;
+    const filetype = file.type.slice(0, 5);
     console.log('Sending this file to the server:', e.target.files[0]);
     console.log(`Name: ${filename}\n Type: ${filetype}`);
-
     this.props.socket.emit('add media', filename, filetype);
+    // End: Jeff and Joann's code
 
+    if (file.type === 'video/mp4'){
+      this.sendVideo(file);
+    } else if (file.type === 'audio/mp3'){
+      this.sendAudio(file);
+    }
     this.setState({
-      file: e.target.files[0],
+      file
+    });
+  }
+
+  sendVideo(file) {
+    // Read in the file from disk.
+    // For each chunk, append it to the local MediaSource and send it to the other peer
+    
+    const video = document.querySelector('.video');
+    readFile(file, (chunk) => {
+      appendChunk(chunk, video);
+      this.state.conn.send(chunk);
+    });
+  }
+
+  sendAudio(file) {
+    const audio = document.querySelector('.audio');
+
+    audio.src = window.URL.createObjectURL(file);
+    this.state.conn.send(file);
+
+    // readAudioFile(file, (audioData) => {
+    //   decodeSong(audioData, audio);
+    // });
+  }
+
+  startApp() {
+    this.setState({
       showLanding: false,
       showBody: true
     });
@@ -61,7 +102,7 @@ class App extends React.Component {
     // Act as source: display a link that may be sent to a receiver
     getMyId().then((myId) => {
       this.setState({
-        myId,
+        myId
       });
     });
 
@@ -71,14 +112,7 @@ class App extends React.Component {
       // Remove the link display
       this.setState({
         showLink: false,
-      });
-
-      // Read in the file from disk.
-      // For each chunk, append it to the local MediaSource and send it to the other peer
-      const video = document.querySelector('.video');
-      readFile(this.state.file, (chunk) => {
-        appendChunk(chunk, video);
-        conn.send(chunk);
+        conn
       });
     })
     .catch(console.error.bind(console));
@@ -93,37 +127,35 @@ class App extends React.Component {
         if (typeof data === 'string') {
           console.log(data);
         } else {
-          // Append each received ArrayBuffer to the local MediaSource
-          const video = document.querySelector('.video');          
-          appendChunk(data, video);
+          // // Append each received ArrayBuffer to the local MediaSource
+          // const video = document.querySelector('.video');          
+          // appendChunk(data, video);
+          // 
+          const audio = document.querySelector('.audio');
+          if (data.constructor === ArrayBuffer) {
+            const dataView = new Uint8Array(data);
+            const dataBlob = new Blob([dataView]);
+            audio.src = window.URL.createObjectURL(dataBlob);
+          }
         }
       });
     });
   }
 
-  // render() {
-  //   return (
-  //     <div>
-  //       {this.state.showLanding ? <Landing setFile={this.setFile} /> : null}
-  //       {this.state.showLink ? <Link myId={this.state.myId} /> : null}
-  //       {this.state.showBody ? <div className="wrapper">
-  //         <Library socket={this.props.socket} setFile={this.setFile}/>
-  //         <Video socket={this.props.socket} />
-  //         <ChatSpace socket={this.props.socket} isSource={this.state.isSource} peerId={this.state.peerId} />
-  //       </div> : null}
-  //     </div>
-  //   );
-  // }
-
   render() {
     return (
       <div>
-        {this.state.showLanding ? <Landing setFile={this.setFile} /> : null}
+        {this.state.showLanding ? <Landing startApp={this.startApp} /> : null}
         {this.state.showLink ? <Link myId={this.state.myId} /> : null}
         {this.state.showBody ? <div className="wrapper">
+
           <Library socket={this.props.socket} setFile={this.setFile} />
           <Main socket={this.props.socket} isSource={this.state.isSource} peerId={this.state.peerId} />
+
+          <Media socket={this.props.socket} fileType={this.state.file.type.slice(0, 5)} isSource={this.state.isSource} peerId={this.state.peerId} />
+
           <ChatSpace socket={this.props.socket} isSource={this.state.isSource} peerId={this.state.peerId} />
+          <input type="file" id="files" className="drop-input" name="file" onChange={this.setFile} />
         </div> : null}
       </div>
     );
