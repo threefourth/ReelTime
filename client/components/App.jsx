@@ -98,28 +98,24 @@ class App extends React.Component {
   }
 
   setFile(e) {
+    // Stores new file information
     const file = e.target.files[0];
     const filename = file.name;
-    const filetype = file.type.slice(0, 5);
+    const filetype = file.type.slice(0, 5); 
 
+    // Sends the file information to server
     this.props.socket.emit('add media', filename, filetype, file);
-
-    // if (this.state.isSource === false) {
-    //   this.props.socket.emit('change source', 'filler');
-    // }
 
     if (this.state.file.type.slice(0, 5) === 'video') {
       this.setState({
         file,
         newFileUploaded: true,
-        // isSource: true,
         videoStop: true
       })
     } else {
       this.setState({
         file,
         newFileUploaded: true
-        // isSource: true
       });
     }
   }
