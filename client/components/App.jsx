@@ -6,8 +6,8 @@ import Link from './Link';
 import Library from "./Library.jsx";
 import Main from "./Main.jsx";
 // import Video from "./Video.jsx";
+// import Media from './Media';
 
-import Media from './Media';
 import ChatSpace from './ChatSpace';
 
 
@@ -140,59 +140,15 @@ class App extends React.Component {
     .catch(console.error.bind(console));
   }
 
-  // initAsReceiver(peerId) {
-
-  //   establishPeerConnection(peerId).then((conn) => {
-  //     // Now connected to source as receiver
-
-  //     // Listen for incoming media data from source
-  //     conn.on('data', (data) => {
-  //       if (typeof data === 'string') {
-
-  //         console.log(data);
-
-  //       } else {
-  //         console.log('data.constructor', data.constructor);
-  //         if (this.state.file.type === 'video/mp4') {
-
-  //           // Append each received ArrayBuffer to the local MediaSource
-  //           const video = document.querySelector('.video');          
-  //           appendChunk(data, video);
-
-  //         } else if (this.state.file.type === 'audio/mp3') {  
-
-  //           const audio = document.querySelector('.audio');
-  //           if (data.constructor === ArrayBuffer) {
-  //             const dataView = new Uint8Array(data);
-  //             const dataBlob = new Blob([dataView]);
-  //             audio.src = window.URL.createObjectURL(dataBlob);
-  //           }
-
-  //         }
-
-  //       }
-  //     });
-  //   });
-  // }
-
   render() {
     return (
       <div>
         {this.state.showLanding ? <Landing startApp={this.startApp} /> : null}
         {this.state.showLink ? <Link myId={this.state.myId} /> : null}
         {this.state.showBody ? <div className="wrapper">
-<<<<<<< 24d74c918f2aeefc03ba8827d81019b62d325f64
-
           <Library socket={this.props.socket} setFile={this.setFile} />
-          <Main socket={this.props.socket} isSource={this.state.isSource} peerId={this.state.peerId} />
-
-          <Media socket={this.props.socket} fileType={this.state.file.type.slice(0, 5)} isSource={this.state.isSource} peerId={this.state.peerId} />
-
-=======
-          <Media socket={this.props.socket} fileType={this.state.file.type.slice(0, 5)} isSource={this.state.isSource} peerId={this.state.peerId} />
->>>>>>> Allow dynamic switching between media file types
+          <Main socket={this.props.socket} fileType={this.state.file.type.slice(0, 5)} isSource={this.state.isSource} peerId={this.state.peerId} />
           <ChatSpace socket={this.props.socket} isSource={this.state.isSource} peerId={this.state.peerId} />
-          <input type="file" id="files" className="drop-input" name="file" onChange={this.setFile} />
         </div> : null}
       </div>
     );
@@ -204,3 +160,5 @@ App.propTypes = {
 };
 
 export default App;
+
+// <input type="file" id="files" className="drop-input" name="file" onChange={this.setFile} />

@@ -15,10 +15,7 @@ const EXPRESS_PORT = 3000;
 app.use(express.static(`${__dirname}/../client`));
 
 
-
-// var filenames = ['My Neighbor Totoro', 'Spirited Away', 'Ponyo', 'Howl\'s Moving Castle'];
-
-var files = {
+const files = {
   videos: [],
   audio: [],
   images: []
@@ -45,6 +42,7 @@ io.on('connection', (socket) => {
     } else if (type === 'image') {
       files.images.push(name);
     }
+    io.emit('add media', files);
   });
 
   socket.on('request files', () => {

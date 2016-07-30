@@ -11,6 +11,14 @@ class Library extends React.Component {
     this.updateLibraryList();
   }
 
+  componentDidMount() {
+    this.props.socket.on('add media', (files) => {
+      this.setState({
+        filenames: files
+      })
+    })
+  }
+
   updateLibraryList() {
     // Request filenames from server
     this.props.socket.emit('request files');
@@ -26,7 +34,7 @@ class Library extends React.Component {
 
   setFileAndUpdateLibrary(e) {
     this.props.setFile(e);
-    this.updateLibraryList();
+    // this.updateLibraryList();
   }
 
   render() {
@@ -47,21 +55,21 @@ class Library extends React.Component {
                 <div className="library-sub-header">Videos</div>  
               </td>
             </tr>
-              {this.state.filenames !== null ? this.state.filenames.videos.map(file => <tr className="library-list-file"><td>{file}</td></tr>) : null}
+              {this.state.filenames !== null ? this.state.filenames.videos.map((file, index) => <tr className="library-list-file" key={index}><td>{file}</td></tr>) : null}
       
             <tr>
               <td>
                 <div className="library-sub-header">Audio</div>  
               </td>
             </tr>
-              {this.state.filenames !== null ? this.state.filenames.audio.map(file => <tr className="library-list-file"><td>{file}</td></tr>) : null}
+              {this.state.filenames !== null ? this.state.filenames.audio.map((file, index) => <tr className="library-list-file" key={index}><td>{file}</td></tr>) : null}
 
             <tr>
               <td>
                 <div className="library-sub-header">Images</div>  
               </td>
             </tr>
-              {this.state.filenames !== null ? this.state.filenames.images.map(file => <tr className="library-list-file"><td>{file}</td></tr>) : null}
+              {this.state.filenames !== null ? this.state.filenames.images.map((file, index) => <tr className="library-list-file" key={index}><td>{file}</td></tr>) : null}
 
           </tbody>
         </table>
