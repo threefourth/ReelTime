@@ -1,4 +1,6 @@
 import React from 'react';
+import { getMyId, establishPeerConnection } from '../lib/webrtc';
+import appendChunk from '../lib/mediaSource';
 
 class Media extends React.Component {
   constructor(props) {
@@ -6,23 +8,33 @@ class Media extends React.Component {
 
     this.emitPlayAndListenForPause = this.emitPlayAndListenForPause.bind(this);
     this.emitPauseAndListenForPlay = this.emitPauseAndListenForPlay.bind(this);
-    
-    this.fileType = this.props.fileType.slice(0, 5);
-    console.log('fileType in Media component', this.fileType);
+
+    this.state = {
+      fileType: this.props.fileType,
+      change: false
+    }
   }
 
   componentDidMount() {
+    if (!this.props.isSource) {
+      this.initAsReceiver(this.props.peerId);
+    }
+
+    const that = this;
+    let media;
+    
     // Begin animating the video when it starts playing
-    // const media = document.querySelector(this.fileType);
     // media.addEventListener('canplay', (e) => {
     //   // need to update css effects for audio
     //   media.className += ' video-reveal';
     //   setTimeout(() => { media.className = 'video'; }, 2000);
     // });
     
-    let media = document.querySelector(`.${this.fileType}`);
-
     this.props.socket.on('play', (otherTime) => {
+      console.log('inside socket play');
+      media = this.props.isSource ? document.querySelector(this.props.fileType) 
+        : document.querySelector(this.state.fileType);
+      console.log('media:', media);
       if (Math.floor(media.currentTime) > Math.floor(otherTime) + 0.5 ||
           Math.floor(media.currentTime) < Math.floor(otherTime) - 0.5) {
         media.currentTime = otherTime;
@@ -31,43 +43,101 @@ class Media extends React.Component {
     });
 
     this.props.socket.on('pause', (otherTime) => {
+      console.log('inside socket pause');
+      media = this.props.isSource ? document.querySelector(this.props.fileType) 
+        : document.querySelector(this.state.fileType);
+      console.log('media:', media);
+
       if (Math.floor(media.currentTime) > Math.floor(otherTime) + 0.5 ||
           Math.floor(media.currentTime) < Math.floor(otherTime) - 0.5) {
         media.currentTime = otherTime;
       }
       media.pause();
     });
+
+    this.props.socket.on('newFile', (fileType) => {
+      console.log('Media: socket new file recieved');
+      that.setState({
+        fileType,
+        change: true
+      });
+    });
+  }
+
+  componentDidUpdate() {
+    console.log('inside componentDidUpdate in Media');
+    if (this.state.change) {
+      console.log('right before emitting media update from Media');
+      this.props.socket.emit('media update', 'filler');
+      this.setState({
+        change: false
+      })
+    }
   }
 
   emitPlayAndListenForPause(e) {
     console.log('emitPlayAndListenForPause invoked!');
     const media = e.target;
     this.props.socket.emit('play', media.currentTime);
-    // this.props.socket.on('pause', (otherTime) => {
-    //   if (Math.floor(media.currentTime) > Math.floor(otherTime) + 0.5 ||
-    //       Math.floor(media.currentTime) < Math.floor(otherTime) - 0.5) {
-    //     media.currentTime = otherTime;
-    //   }
-    //   media.pause();
-    // });
   }
 
   emitPauseAndListenForPlay(e) {
     console.log('emitPauseAndListenForPlay invoked!');
     const media = e.target;
     this.props.socket.emit('pause', media.currentTime);
-    // this.props.socket.on('play', (otherTime) => {
-    //   if (Math.floor(media.currentTime) > Math.floor(otherTime) + 0.5 ||
-    //       Math.floor(media.currentTime) < Math.floor(otherTime) - 0.5) {
-    //     media.currentTime = otherTime;
-    //   }
-    //   media.play();
-    // });
+  }
+
+  initAsReceiver(peerId) {
+    const that = this;
+
+    establishPeerConnection(peerId).then((conn) => {
+      // Now connected to source as receiver
+      console.log('Peer - Media - established connection')
+      // Listen for incoming media data from source
+      conn.on('data', (data) => {
+        if (typeof data === 'string') {
+          console.log(data);
+        } else {
+          console.log('Peer - data connection received');
+          console.log('filetype is:', that.state.fileType);
+
+          if (that.state.fileType === 'video') {
+
+            // Append each received ArrayBuffer to the local MediaSource
+            const video = document.querySelector('.video');          
+            appendChunk(data, video);
+
+          } else if (that.state.fileType === 'audio') {  
+
+            const audio = document.querySelector('.audio');
+            if (data.constructor === ArrayBuffer) {
+              const dataView = new Uint8Array(data);
+              const dataBlob = new Blob([dataView]);
+              audio.src = window.URL.createObjectURL(dataBlob);
+            }
+
+          }
+
+        }
+      });
+    });
   }
 
   render() {
+
+    let fileType;
+
+    if (this.props.isSource) {
+      fileType = this.props.fileType;
+    } else {
+      fileType = this.state.fileType;
+    }
+    
+    console.log('fileType in Media component', fileType);
+
     let mediaTag;
-    if (this.fileType === 'video') {
+
+    if (fileType === 'video') {
       mediaTag = 
         <div className="video-container">
           <div className="video-border"></div>
@@ -81,7 +151,7 @@ class Media extends React.Component {
           </video>
           <div className="video-border"></div>
         </div>
-    } else if (this.fileType === 'audio') {
+    } else if (fileType === 'audio') {
       mediaTag = 
         <div className="audio-container">
           <div className="audio-border"></div>

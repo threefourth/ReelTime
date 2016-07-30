@@ -15,7 +15,7 @@ import { getMyId, establishPeerConnection } from '../lib/webrtc';
 import readFile from '../lib/fileReader';
 import appendChunk from '../lib/mediaSource';
 
-import { readAudioFile, decodeSong } from '../lib/audioSource';
+// import { readAudioFile, decodeSong } from '../lib/audioSource';
 
 class App extends React.Component {
   constructor(props) {
@@ -30,7 +30,9 @@ class App extends React.Component {
 
     this.state = {
       isSource,
-      file: {type: 'audio/mp3'},
+      file: {type: 'video/mp4'},
+      // file: {type: 'audio/mp3'},
+      newFileUploaded: false,
       myId: null,
       peerId: params.get('id'),
       showLanding: isSource,
@@ -41,10 +43,34 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    const that = this;
+
     if (this.state.isSource) {
       this.initAsSource();
-    } else {
-      this.initAsReceiver(this.state.peerId);
+    }
+    // } else {
+    //   this.initAsReceiver(this.state.peerId);
+    // }
+
+    this.props.socket.on('media update', (filler) => {
+      console.log('sending file from source now');
+      if (that.state.file.type === 'video/mp4'){
+        that.sendVideo(that.state.file);
+      } else if (that.state.file.type === 'audio/mp3'){
+        that.sendAudio(that.state.file);
+      }
+      that.setState({
+        newFileUploaded: false
+      });
+    });
+  }
+
+  componentDidUpdate() {
+    console.log('App componentDidUpdate invoked!');
+    if (this.state.newFileUploaded) {
+      console.log('App - componentDidUpdate - inside newFileUploaded option');
+      console.log('new filetype is:', this.state.file.type.slice(0, 5));
+      this.props.socket.emit('newFile', this.state.file.type.slice(0, 5));
     }
   }
 
@@ -59,13 +85,9 @@ class App extends React.Component {
     this.props.socket.emit('add media', filename, filetype);
     // End: Jeff and Joann's code
 
-    if (file.type === 'video/mp4'){
-      this.sendVideo(file);
-    } else if (file.type === 'audio/mp3'){
-      this.sendAudio(file);
-    }
     this.setState({
-      file
+      file,
+      newFileUploaded: true
     });
   }
 
@@ -83,8 +105,8 @@ class App extends React.Component {
   sendAudio(file) {
     const audio = document.querySelector('.audio');
 
-    audio.src = window.URL.createObjectURL(file);
     this.state.conn.send(file);
+    audio.src = window.URL.createObjectURL(file);
 
     // readAudioFile(file, (audioData) => {
     //   decodeSong(audioData, audio);
@@ -118,29 +140,40 @@ class App extends React.Component {
     .catch(console.error.bind(console));
   }
 
-  initAsReceiver(peerId) {
-    establishPeerConnection(peerId).then((conn) => {
-      // Now connected to source as receiver
+  // initAsReceiver(peerId) {
 
-      // Listen for incoming video data from source
-      conn.on('data', (data) => {
-        if (typeof data === 'string') {
-          console.log(data);
-        } else {
-          // // Append each received ArrayBuffer to the local MediaSource
-          // const video = document.querySelector('.video');          
-          // appendChunk(data, video);
-           
-          const audio = document.querySelector('.audio');
-          if (data.constructor === ArrayBuffer) {
-            const dataView = new Uint8Array(data);
-            const dataBlob = new Blob([dataView]);
-            audio.src = window.URL.createObjectURL(dataBlob);
-          }
-        }
-      });
-    });
-  }
+  //   establishPeerConnection(peerId).then((conn) => {
+  //     // Now connected to source as receiver
+
+  //     // Listen for incoming media data from source
+  //     conn.on('data', (data) => {
+  //       if (typeof data === 'string') {
+
+  //         console.log(data);
+
+  //       } else {
+  //         console.log('data.constructor', data.constructor);
+  //         if (this.state.file.type === 'video/mp4') {
+
+  //           // Append each received ArrayBuffer to the local MediaSource
+  //           const video = document.querySelector('.video');          
+  //           appendChunk(data, video);
+
+  //         } else if (this.state.file.type === 'audio/mp3') {  
+
+  //           const audio = document.querySelector('.audio');
+  //           if (data.constructor === ArrayBuffer) {
+  //             const dataView = new Uint8Array(data);
+  //             const dataBlob = new Blob([dataView]);
+  //             audio.src = window.URL.createObjectURL(dataBlob);
+  //           }
+
+  //         }
+
+  //       }
+  //     });
+  //   });
+  // }
 
   render() {
     return (
@@ -148,12 +181,16 @@ class App extends React.Component {
         {this.state.showLanding ? <Landing startApp={this.startApp} /> : null}
         {this.state.showLink ? <Link myId={this.state.myId} /> : null}
         {this.state.showBody ? <div className="wrapper">
+<<<<<<< 24d74c918f2aeefc03ba8827d81019b62d325f64
 
           <Library socket={this.props.socket} setFile={this.setFile} />
           <Main socket={this.props.socket} isSource={this.state.isSource} peerId={this.state.peerId} />
 
           <Media socket={this.props.socket} fileType={this.state.file.type.slice(0, 5)} isSource={this.state.isSource} peerId={this.state.peerId} />
 
+=======
+          <Media socket={this.props.socket} fileType={this.state.file.type.slice(0, 5)} isSource={this.state.isSource} peerId={this.state.peerId} />
+>>>>>>> Allow dynamic switching between media file types
           <ChatSpace socket={this.props.socket} isSource={this.state.isSource} peerId={this.state.peerId} />
           <input type="file" id="files" className="drop-input" name="file" onChange={this.setFile} />
         </div> : null}

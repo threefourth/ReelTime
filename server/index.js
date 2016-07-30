@@ -69,6 +69,16 @@ io.on('connection', (socket) => {
     console.log('Pause command recieved');
     socket.broadcast.emit('pause', time);
   });
+
+  socket.on('newFile', (fileType) => {
+    console.log('New file type command recieved');
+    socket.broadcast.emit('newFile', fileType);
+  });
+
+  socket.on('media update', (filler) => {
+    console.log('media update command recieved');
+    socket.broadcast.emit('media update', filler);
+  });
 });
 
 
