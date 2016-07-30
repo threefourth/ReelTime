@@ -766,19 +766,9 @@ body {
   -moz-border-radius: 50px;
   -webkit-border-radius: 50px;
   border-radius: 59%;
-  background-color: 224,122,122,0.4
-  color: #ccc;
-  margin: auto;
-}
-
-.landing-circle {
-  width: 80vh;
-  height: 80vh;
-  -moz-border-radius: 50px;
-  -webkit-border-radius: 50px;
-  border-radius: 59%;
   background-color: rgba(224,122,122,0.4);
   color: #ccc;
+  margin: auto;
 }
 
 .drop-box {

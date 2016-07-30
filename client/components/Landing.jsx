@@ -15,8 +15,7 @@ const Landing = (props) => (
           <div className="intro-lead-in">Watch TV with your friends</div>
           <div className="intro-heading">But in your underwear</div>
           <p className="landing-drop-text landing-circle">
-            Drop Your Video File Here
-            <input type="file" id="files" className="landing-circle drop-box" name="file" onChange={props.setFile} />
+            <button onClick={props.startApp}>Let's Get Started!</button>
           </p>
         </div>
       </div>
@@ -97,7 +96,7 @@ const Landing = (props) => (
 );
 
 Landing.propTypes = {
-  setFile: React.PropTypes.func.isRequired,
+  startApp: React.PropTypes.func.isRequired,
 };
 
 export default Landing;

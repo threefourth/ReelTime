@@ -2,6 +2,7 @@ import React from 'react';
 
 import Video from "./Video.jsx";
 import Peers from "./Peers.jsx";
+import Media from "./Media";
 
 class Main extends React.Component {
   constructor(props) {
@@ -12,7 +13,7 @@ class Main extends React.Component {
     return (
       <div className="main">
         <div className="row">
-          <Video socket={this.props.socket} />
+          <Media socket={this.props.socket} fileType={this.props.fileType} isSource={this.props.isSource} peerId={this.props.peerId} />
         </div>
 
         <div className="divider"></div>
