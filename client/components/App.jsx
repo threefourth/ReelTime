@@ -24,6 +24,7 @@ class App extends React.Component {
     this.startApp = this.startApp.bind(this);
     this.sendVideo = this.sendVideo.bind(this);
     this.sendAudio = this.sendAudio.bind(this);
+    this.sendImage = this.sendImage.bind(this);
     this.readFile = this.readFile.bind(this);
 
     const params = new URLSearchParams(location.search.slice(1));
@@ -32,7 +33,6 @@ class App extends React.Component {
     this.state = {
       isSource,
       file: {type: ''},
-      // file: {type: 'audio/mp3'},
       newFileUploaded: false,
       videoStop: false,
       myId: null,
@@ -95,7 +95,7 @@ class App extends React.Component {
       this.setState({
         file,
         newFileUploaded: true
-      });      
+      });
     }
   }
 
@@ -137,7 +137,9 @@ class App extends React.Component {
     const audio = document.querySelector('.audio');
 
     this.state.conn.send(file);
+    console.log('file in App sendAudio:', file);
     audio.src = window.URL.createObjectURL(file);
+    console.log('audio src in App is:', audio.src);
 
     // readAudioFile(file, (audioData) => {
     //   decodeSong(audioData, audio);
