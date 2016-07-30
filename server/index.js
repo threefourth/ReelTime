@@ -16,9 +16,9 @@ app.use(express.static(`${__dirname}/../client`));
 
 
 const files = {
-  videos: [],
+  video: [],
   audio: [],
-  images: []
+  image: []
 };
 
 // Socket.io
@@ -34,13 +34,13 @@ io.on('connection', (socket) => {
   });
 
   // Add filenames to files object
-  socket.on('add media', (name, type) => {
+  socket.on('add media', (name, type, file) => {
     if (type === 'video') {
-      files.videos.push(name);
+      files.video.push({name: name, file:file});
     } else if (type === 'audio') {
-      files.audio.push(name);
+      files.audio.push({name: name, file:file});
     } else if (type === 'image') {
-      files.images.push(name);
+      files.image.push({name: name, file:file});
     }
     io.emit('add media', files);
   });
@@ -69,10 +69,20 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('newFile', fileType);
   });
 
+  socket.on('switchFile', (fileType) => {
+    console.log('switch file type command recieved');
+    socket.broadcast.emit('switchFile', fileType);
+  });
+
   socket.on('media update', (filler) => {
     console.log('media update command recieved');
     socket.broadcast.emit('media update', filler);
   });
+
+  socket.on('media switch', (filler) => {
+    console.log('media switch command recieved');
+    socket.broadcast.emit('media switch', filler);
+  })
 });
 
 

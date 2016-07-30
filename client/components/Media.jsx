@@ -11,7 +11,8 @@ class Media extends React.Component {
 
     this.state = {
       fileType: this.props.fileType,
-      change: false
+      change: false,
+      switchFile: false
     }
   }
 
@@ -59,6 +60,14 @@ class Media extends React.Component {
         change: true
       });
     });
+
+    this.props.socket.on('switchFile', (fileType) => {
+      console.log('Media: switch file recieved');
+      that.setState({
+        fileType,
+        switchFile: true
+      });
+    })
   }
 
   componentDidUpdate() {
@@ -68,6 +77,12 @@ class Media extends React.Component {
       this.props.socket.emit('media update', 'filler');
       this.setState({
         change: false
+      })
+    } else if (this.state.switchFile) {
+      console.log('right before emitting switchFile from Media');
+      this.props.socket.emit('media switch', 'filler');
+      this.setState({
+        switchFile: false
       })
     }
   }
