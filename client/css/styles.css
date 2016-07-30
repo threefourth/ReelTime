@@ -12,7 +12,6 @@ html, body, #app, .wrapper {
   flex-direction: row;  
 }
 
-
 .video-container {
   flex: 1;
   display: flex;
@@ -25,8 +24,14 @@ html, body, #app, .wrapper {
 
 .video {
   flex: 1 0 auto;
-  width: 100%;
+  width: 90%;
   max-height: 100vh;
+}
+
+.peer-video {
+  display: inline-block;
+  margin: 0 8px 0 8px;
+  width: 20vh;
 }
 
 .video-reveal {
@@ -71,6 +76,8 @@ html, body, #app, .wrapper {
 }
 
 .chat-container li.other {
+  -webkit-border-radius: 50px;
+  border-radius: 59%;
   float: left;
 }
 
@@ -78,6 +85,7 @@ html, body, #app, .wrapper {
   float: right;
   background: rgba(255,255,255,0.2);
 }
+
 form { 
   background: #000;
   padding: 3px;
@@ -85,6 +93,7 @@ form {
   bottom: 0;
   width: 300px;
 }
+
 .chat-input { 
   border: 0;
   padding: 10px;
@@ -92,8 +101,81 @@ form {
   background-color: #777;
   color: #ddd;
 }
+
 .chat-submit { 
   display: none;
+}
+
+.library {
+  margin-left: 50px;
+}
+
+.library-list {
+  width: 20%;
+}
+
+.library-header {
+  color: #FFF;
+  padding-bottom: 10px;
+}
+
+.library-sub-header {
+  font-size: 18px;
+  padding: 40px 0 10px 0;
+}
+
+.library-list-file {
+  color: #FFF;
+  size: 16px;
+  cursor: pointer;
+  transition: color 0.5s;
+}
+
+.library-list-file:hover {
+  color: #50C8FF;
+  transition: color 0.5s;
+}
+
+.library-drop-text {
+  color: white;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 20vh;
+  font-size: 1.6vh;
+  position: fixed;
+  bottom: 0;
+}
+
+.library-circle {
+  width: 20vh;
+  height: 20vh;
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  border-radius: 59%;
+  background-color: rgba(224,122,122,0.4);
+  color: #ccc;
+  margin: 0 auto;
+}
+
+.library-drop-box {
+  opacity: 0;
+  margin-top: -20vh;
+}
+
+.peers {
+  padding-top: 25px;
+}
+
+.peer {
+  display: inline-block;
+  margin: 0 8px 0 8px;
+  height: 200px;
+  width: 200px;
+  background-color: #50C8FF;
+}
+
+.divider {
+  height: 2vh;
 }
 
 @keyframes fadeIn {

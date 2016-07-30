@@ -38,7 +38,7 @@ class VideoChat extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="peer-video">
         <video className="local-video" autoPlay></video>
         <video className="remote-video" autoPlay></video>
       </div>

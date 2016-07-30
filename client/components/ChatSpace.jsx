@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Message from './Message.jsx';
-import VideoChat from './VideoChat.jsx';
+// import VideoChat from './VideoChat.jsx';
 import { getMyId } from '../lib/webrtc';
 
 class ChatSpace extends React.Component {
@@ -14,7 +14,7 @@ class ChatSpace extends React.Component {
       messages: [
         { className: 'other', text: 'Begin chatting here.' },
       ],
-    };
+    };  
 
     // If source, create room using myId
     if (!this.props.peerId) {
@@ -75,10 +75,34 @@ class ChatSpace extends React.Component {
     });
   }
 
+  // render() {
+  //   return (
+  //     <div className="chat-space">
+  //       <VideoChat isSource={this.props.isSource} peerId={this.props.peerId} />
+  //       <div className="chat-container">
+  //         <ul>
+  //           {this.state.messages.map((message, i) => <Message message={message} key={i} />)}
+  //         </ul>
+  //       </div>
+  //       <form onSubmit={this.handleSubmit}>
+  //         <input
+  //           type="text"
+  //           id="m"
+  //           className="chat-input"
+  //           value={this.state.message}
+  //           autoComplete="off"
+  //           onChange={this.handleChange}
+  //           placeholder="Send a message..."
+  //         />
+  //         <input type="submit" className="chat-submit" value="Submit" />
+  //       </form>
+  //     </div>
+  //   );
+  // }
+
   render() {
     return (
       <div className="chat-space">
-        <VideoChat isSource={this.props.isSource} peerId={this.props.peerId} />
         <div className="chat-container">
           <ul>
             {this.state.messages.map((message, i) => <Message message={message} key={i} />)}
