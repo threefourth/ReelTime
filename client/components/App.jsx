@@ -3,7 +3,8 @@ import React from "react";
 import Landing from './Landing';
 import Link from './Link';
 import Library from "./Library.jsx";
-import Video from "./Video.jsx";
+import Main from "./Main.jsx";
+// import Video from "./Video.jsx";
 import ChatSpace from "./ChatSpace.jsx";
 
 import { getMyId, establishPeerConnection } from '../lib/webrtc';
@@ -38,7 +39,16 @@ class App extends React.Component {
   }
 
   setFile(e) {
-    this.props.socket.emit('add media', e.target.files[0].name);
+    // this.props.socket.emit('add media', e.target.files[0].name);
+    var filename = e.target.files[0].name; 
+    var filetype = e.target.files[0].type; // video/mp4 => video
+
+    filetype = filetype.slice(0, filetype.indexOf('/'))
+
+    console.log('Sending this file to the server:', e.target.files[0]);
+    console.log(`Name: ${filename}\n Type: ${filetype}`);
+
+    this.props.socket.emit('add media', filename, filetype);
 
     this.setState({
       file: e.target.files[0],
@@ -91,14 +101,28 @@ class App extends React.Component {
     });
   }
 
+  // render() {
+  //   return (
+  //     <div>
+  //       {this.state.showLanding ? <Landing setFile={this.setFile} /> : null}
+  //       {this.state.showLink ? <Link myId={this.state.myId} /> : null}
+  //       {this.state.showBody ? <div className="wrapper">
+  //         <Library socket={this.props.socket} setFile={this.setFile}/>
+  //         <Video socket={this.props.socket} />
+  //         <ChatSpace socket={this.props.socket} isSource={this.state.isSource} peerId={this.state.peerId} />
+  //       </div> : null}
+  //     </div>
+  //   );
+  // }
+
   render() {
     return (
       <div>
         {this.state.showLanding ? <Landing setFile={this.setFile} /> : null}
         {this.state.showLink ? <Link myId={this.state.myId} /> : null}
         {this.state.showBody ? <div className="wrapper">
-          <Library socket={this.props.socket} setFile={this.setFile}/>
-          <Video socket={this.props.socket} />
+          <Library socket={this.props.socket} setFile={this.setFile} />
+          <Main socket={this.props.socket} isSource={this.state.isSource} peerId={this.state.peerId} />
           <ChatSpace socket={this.props.socket} isSource={this.state.isSource} peerId={this.state.peerId} />
         </div> : null}
       </div>

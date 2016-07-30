@@ -24,8 +24,14 @@ html, body, #app, .wrapper {
 
 .video {
   flex: 1 0 auto;
-  width: 100%;
+  width: 90%;
   max-height: 100vh;
+}
+
+.peer-video {
+  display: inline-block;
+  margin: 0 8px 0 8px;
+  width: 20vh;
 }
 
 .video-reveal {
@@ -70,6 +76,8 @@ html, body, #app, .wrapper {
 }
 
 .chat-container li.other {
+  -webkit-border-radius: 50px;
+  border-radius: 59%;
   float: left;
 }
 
@@ -98,8 +106,34 @@ form {
   display: none;
 }
 
+.library {
+  margin-left: 50px;
+}
+
 .library-list {
   width: 20%;
+}
+
+.library-header {
+  color: #FFF;
+  padding-bottom: 10px;
+}
+
+.library-sub-header {
+  font-size: 18px;
+  padding: 40px 0 10px 0;
+}
+
+.library-list-file {
+  color: #FFF;
+  size: 16px;
+  cursor: pointer;
+  transition: color 0.5s;
+}
+
+.library-list-file:hover {
+  color: #50C8FF;
+  transition: color 0.5s;
 }
 
 .library-drop-text {
@@ -116,8 +150,6 @@ form {
   width: 20vh;
   height: 20vh;
   -moz-border-radius: 50px;
-  -webkit-border-radius: 50px;
-  border-radius: 59%;
   background-color: 224,122,122,0.4
   color: #ccc;
   margin: auto;
@@ -136,8 +168,23 @@ form {
 
 .library-drop-box {
   opacity: 0;
-  position: absolute;
   margin-top: -20vh;
+}
+
+.peers {
+  padding-top: 25px;
+}
+
+.peer {
+  display: inline-block;
+  margin: 0 8px 0 8px;
+  height: 200px;
+  width: 200px;
+  background-color: #50C8FF;
+}
+
+.divider {
+  height: 2vh;
 }
 
 @keyframes fadeIn {

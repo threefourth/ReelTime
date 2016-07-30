@@ -16,10 +16,13 @@ app.use(express.static(`${__dirname}/../client`));
 
 
 
-// var filenames = ['My Neighbor Totoro', 'Spirited Away'];
-var filenames = ['My Neighbor Totoro'];
+// var filenames = ['My Neighbor Totoro', 'Spirited Away', 'Ponyo', 'Howl\'s Moving Castle'];
 
-
+var files = {
+  videos: [],
+  audio: [],
+  images: []
+};
 
 // Socket.io
 io.on('connection', (socket) => {
@@ -36,13 +39,19 @@ io.on('connection', (socket) => {
 
 
 
-  // Add filename to array when new media is added
-  socket.on('add media', (media) => {
-    filenames.push(media);
+  // Add filenames to files object
+  socket.on('add media', (name, type) => {
+    if (type === 'video') {
+      files.videos.push(name);
+    } else if (type === 'audio') {
+      files.audio.push(name);
+    } else if (type === 'image') {
+      files.images.push(name);
+    }
   });
 
   socket.on('request files', () => {
-    socket.emit('send files', filenames);
+    socket.emit('send files', files);
   });
 
 
