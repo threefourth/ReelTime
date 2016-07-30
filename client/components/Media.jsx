@@ -31,10 +31,9 @@ class Media extends React.Component {
     // });
     
     this.props.socket.on('play', (otherTime) => {
-      console.log('inside socket play');
       media = this.props.isSource ? document.querySelector(this.props.fileType) 
         : document.querySelector(this.state.fileType);
-      console.log('media:', media);
+
       if (Math.floor(media.currentTime) > Math.floor(otherTime) + 0.5 ||
           Math.floor(media.currentTime) < Math.floor(otherTime) - 0.5) {
         media.currentTime = otherTime;
@@ -43,10 +42,8 @@ class Media extends React.Component {
     });
 
     this.props.socket.on('pause', (otherTime) => {
-      console.log('inside socket pause');
       media = this.props.isSource ? document.querySelector(this.props.fileType) 
         : document.querySelector(this.state.fileType);
-      console.log('media:', media);
 
       if (Math.floor(media.currentTime) > Math.floor(otherTime) + 0.5 ||
           Math.floor(media.currentTime) < Math.floor(otherTime) - 0.5) {
@@ -76,13 +73,11 @@ class Media extends React.Component {
   }
 
   emitPlayAndListenForPause(e) {
-    console.log('emitPlayAndListenForPause invoked!');
     const media = e.target;
     this.props.socket.emit('play', media.currentTime);
   }
 
   emitPauseAndListenForPlay(e) {
-    console.log('emitPauseAndListenForPlay invoked!');
     const media = e.target;
     this.props.socket.emit('pause', media.currentTime);
   }
@@ -111,6 +106,7 @@ class Media extends React.Component {
             if (data.constructor === ArrayBuffer) {
               const dataView = new Uint8Array(data);
               const dataBlob = new Blob([dataView]);
+              console.log('datablob in Media EPC audio:', dataBlob);
               audio.src = window.URL.createObjectURL(dataBlob);
             }
 

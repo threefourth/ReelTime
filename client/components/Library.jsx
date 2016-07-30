@@ -7,8 +7,6 @@ class Library extends React.Component {
     this.state = {
       filenames: null
     };    
-
-    this.updateLibraryList();
   }
 
   componentDidMount() {
@@ -19,22 +17,8 @@ class Library extends React.Component {
     })
   }
 
-  updateLibraryList() {
-    // Request filenames from server
-    this.props.socket.emit('request files');
-
-    // Receive filenames from server
-    var that = this;
-    this.props.socket.on('send files', (files) => {
-      that.setState({
-        filenames: files
-      });
-    });
-  }
-
   setFileAndUpdateLibrary(e) {
     this.props.setFile(e);
-    // this.updateLibraryList();
   }
 
   render() {
