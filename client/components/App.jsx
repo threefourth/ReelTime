@@ -54,10 +54,12 @@ class App extends React.Component {
 
     this.props.socket.on('media update', (filler) => {
       console.log('sending file from source now');
-      if (that.state.file.type === 'video/mp4'){
+      if (that.state.file.type === 'video/mp4') {
         that.sendVideo(that.state.file);
-      } else if (that.state.file.type === 'audio/mp3'){
+      } else if (that.state.file.type === 'audio/mp3') {
         that.sendAudio(that.state.file);
+      } else if (that.state.file.type === 'image/jpeg' || that.state.file.type === 'image/png') {
+        that.sendImage(that.state.file);
       }
       that.setState({
         newFileUploaded: false
@@ -113,6 +115,12 @@ class App extends React.Component {
     // });
   }
 
+  sendImage(file) {
+    const image = document.querySelector('.image');
+    this.state.conn.send(file);
+    image.src = window.URL.createObjectURL(file);
+  }
+
   startApp() {
     this.setState({
       showLanding: false,
@@ -130,7 +138,6 @@ class App extends React.Component {
 
     establishPeerConnection().then((conn) => {
       // Now connected to receiver as source
-
       // Remove the link display
       this.setState({
         showLink: false,
