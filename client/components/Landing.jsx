@@ -61,7 +61,7 @@ const Landing = (props) => (
         <div className="row">
           <div className="col-lg-12 text-center">
             <h2 className="section-heading">Our Amazing Team</h2>
-            <h3 className="section-subheading text-muted">Meet the ReelTime Greenfield Project Team</h3>
+            <h3 className="section-subheading text-muted">Meet the ReelTime Legacy Project Team</h3>
           </div>
         </div>
 
