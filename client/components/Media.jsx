@@ -98,17 +98,15 @@ class Media extends React.Component {
         if (typeof data === 'string') {
           console.log(data);
         } else {
-          console.log('Peer - data connection received');
-          console.log('filetype is:', that.state.fileType);
 
           if (that.state.fileType === 'video') {
-
+            console.log('EPC fileType video');
             // Append each received ArrayBuffer to the local MediaSource
             const video = document.querySelector('.video');          
             appendChunk(data, video);
 
           } else if (that.state.fileType === 'audio') {  
-
+            console.log('EPC filetype audio');
             const audio = document.querySelector('.audio');
             if (data.constructor === ArrayBuffer) {
               const dataView = new Uint8Array(data);
