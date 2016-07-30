@@ -12,6 +12,11 @@ html, body, #app, .wrapper {
   flex-direction: row;  
 }
 
+.image {
+  flex: 1 0 auto;
+  width: 90%;
+  max-height: 100vh;
+}
 .video-container {
   flex: 1;
   display: flex;
