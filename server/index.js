@@ -36,9 +36,6 @@ io.on('connection', (socket) => {
     socket.join(room);
   });
 
-
-
-
   // Add filenames to files object
   socket.on('add media', (name, type) => {
     if (type === 'video') {
@@ -53,9 +50,6 @@ io.on('connection', (socket) => {
   socket.on('request files', () => {
     socket.emit('send files', files);
   });
-
-
-
 
   // Chat messaging events
   socket.on('chat message', (msg, roomId) => {
