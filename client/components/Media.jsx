@@ -117,7 +117,6 @@ class Media extends React.Component {
           } else if (that.state.fileType === 'image') {
             console.log('EPC filetype image');
             const image = document.querySelector('.image');
-            console.log('DATA INSIDE THIS.STATE.FILETYPE IS', data);
             if (data.constructor === ArrayBuffer) {
               const dataView = new Uint8Array(data);
               const dataBlob = new Blob([dataView]);

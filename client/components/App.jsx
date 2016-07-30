@@ -117,9 +117,7 @@ class App extends React.Component {
 
   sendImage(file) {
     const image = document.querySelector('.image');
-    console.log('GOING TO SEND DATA TO CONN.ON(DATA) AND FILE IS', file);
     this.state.conn.send(file);
-    console.log('IMAGE INSIDE SENDIMAGE IS', image);
     image.src = window.URL.createObjectURL(file);
   }
 
@@ -140,7 +138,6 @@ class App extends React.Component {
 
     establishPeerConnection().then((conn) => {
       // Now connected to receiver as source
-      console.log('ESTABLISHED PEER CONNECTION');
       // Remove the link display
       this.setState({
         showLink: false,
