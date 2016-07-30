@@ -121,8 +121,6 @@ class App extends React.Component {
   }
 
   handleFileSwitch(fileAndType) {
-    // file is of type ArrayBuffer
-    console.log('-----File-----: ', fileAndType.file);
     this.setState({
       file: {type: fileAndType.type},
       arrayBufferFile: fileAndType.file,
