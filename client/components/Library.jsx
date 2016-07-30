@@ -10,10 +10,69 @@ class Library extends React.Component {
     };    
   }
 
-  componentDidMount() {
+    componentDidMount() {
     this.props.socket.on('add media', (files) => {
+
+    var videoArray = files.video;
+    var audioArray = files.audio;
+    var imageArray = files.image;
+
+    var sortedVideoArray = [];
+    var sortedAudioArray = [];
+    var sortedImageArray = [];
+
+    videoArray.forEach((file) => {
+      sortedVideoArray.push(file.name);
+    });
+
+    audioArray.forEach((file) => {
+      sortedAudioArray.push(file.name);
+    });
+
+    imageArray.forEach((file) => {
+      sortedImageArray.push(file.name);
+    });
+
+    sortedVideoArray = sortedVideoArray.sort();
+    sortedAudioArray = sortedAudioArray.sort();
+    sortedImageArray = sortedImageArray.sort();
+
+    var videoArrayObjects = [];
+    var audioArrayObjects = [];
+    var imageArrayObjects = [];
+
+    sortedVideoArray.forEach((name) => {
+      files.video.forEach((file) => {
+        if (name === file.name) {
+          videoArrayObjects.push(file);
+        }
+      });
+    });
+
+    sortedAudioArray.forEach((name) => {
+      files.audio.forEach((file) => {
+        if (name === file.name) {
+          audioArrayObjects.push(file);
+        }
+      });
+    });
+
+    sortedImageArray.forEach((name) => {
+      files.image.forEach((file) => {
+        if (name === file.name) {
+          imageArrayObjects.push(file);
+        }
+      });
+    });
+
+    var sortedFilenames = {
+      video: videoArrayObjects,
+      audio: audioArrayObjects,
+      image: imageArrayObjects
+    };
+
       this.setState({
-        filenames: files
+        filenames: sortedFilenames
       })
     })
   }
