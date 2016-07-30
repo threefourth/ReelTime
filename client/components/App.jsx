@@ -5,17 +5,12 @@ import Link from './Link';
 
 import Library from "./Library.jsx";
 import Main from "./Main.jsx";
-// import Video from "./Video.jsx";
-// import Media from './Media';
-
 import ChatSpace from './ChatSpace';
 
 
 import { getMyId, establishPeerConnection } from '../lib/webrtc';
 // import readFile from '../lib/fileReader';
 import appendChunk from '../lib/mediaSource';
-
-// import { readAudioFile, decodeSong } from '../lib/audioSource';
 
 class App extends React.Component {
   constructor(props) {
@@ -102,31 +97,28 @@ class App extends React.Component {
     const filename = file.name;
     const filetype = file.type.slice(0, 5);
 
-    this.props.socket.emit('add media', filename, filetype, file);
-
-    // if (this.state.isSource === false) {
-    //   this.props.socket.emit('change source', 'filler');
-    // }
+    if (filetype === 'video') {
+      this.props.socket.emit('add media', filename, filetype);
+    } else {
+      this.props.socket.emit('add media', filename, filetype, file);
+    }
 
     if (this.state.file.type.slice(0, 5) === 'video') {
       this.setState({
         file,
         newFileUploaded: true,
-        // isSource: true,
         videoStop: true
       })
     } else {
+      console.log('App, file:', file);
       this.setState({
         file,
         newFileUploaded: true
-        // isSource: true
       });
     }
   }
 
   handleFileSwitch(fileAndType) {
-    // file is of type ArrayBuffer
-    console.log('-----File-----: ', fileAndType.file);
     this.setState({
       file: {type: fileAndType.type},
       arrayBufferFile: fileAndType.file,
@@ -175,9 +167,7 @@ class App extends React.Component {
     if (file.constructor === ArrayBuffer) {
       const dataView = new Uint8Array(file);
       const dataBlob = new Blob([dataView]);
-      console.log('datablob in App sendAudio:', dataBlob);
       audio.src = window.URL.createObjectURL(dataBlob);
-      console.log('audio src in App is:', audio.src);
     } else {
       audio.src = window.URL.createObjectURL(file);
     }
@@ -244,5 +234,3 @@ App.propTypes = {
 };
 
 export default App;
-
-// <input type="file" id="files" className="drop-input" name="file" onChange={this.setFile} />
