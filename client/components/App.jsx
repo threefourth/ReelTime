@@ -12,7 +12,7 @@ import ChatSpace from './ChatSpace';
 
 
 import { getMyId, establishPeerConnection } from '../lib/webrtc';
-import readFile from '../lib/fileReader';
+// import readFile from '../lib/fileReader';
 import appendChunk from '../lib/mediaSource';
 
 // import { readAudioFile, decodeSong } from '../lib/audioSource';
@@ -24,15 +24,17 @@ class App extends React.Component {
     this.startApp = this.startApp.bind(this);
     this.sendVideo = this.sendVideo.bind(this);
     this.sendAudio = this.sendAudio.bind(this);
+    this.readFile = this.readFile.bind(this);
 
     const params = new URLSearchParams(location.search.slice(1));
     const isSource = !params.has('id');
 
     this.state = {
       isSource,
-      file: {type: 'video/mp4'},
+      file: {type: ''},
       // file: {type: 'audio/mp3'},
       newFileUploaded: false,
+      videoStop: false,
       myId: null,
       peerId: params.get('id'),
       showLanding: isSource,
@@ -78,19 +80,23 @@ class App extends React.Component {
 
   setFile(e) {
     const file = e.target.files[0];
-
-    // Start: Jeff and Joann's code
     const filename = file.name;
     const filetype = file.type.slice(0, 5);
-    console.log('Sending this file to the server:', e.target.files[0]);
-    console.log(`Name: ${filename}\n Type: ${filetype}`);
-    this.props.socket.emit('add media', filename, filetype);
-    // End: Jeff and Joann's code
 
-    this.setState({
-      file,
-      newFileUploaded: true
-    });
+    this.props.socket.emit('add media', filename, filetype);
+
+    if (this.state.file.type.slice(0, 5) === 'video') {
+      this.setState({
+        file,
+        newFileUploaded: true,
+        videoStop: true
+      })
+    } else {
+      this.setState({
+        file,
+        newFileUploaded: true
+      });      
+    }
   }
 
   sendVideo(file) {
@@ -98,10 +104,33 @@ class App extends React.Component {
     // For each chunk, append it to the local MediaSource and send it to the other peer
     
     const video = document.querySelector('.video');
-    readFile(file, (chunk) => {
+    this.readFile(file, (chunk) => {
       appendChunk(chunk, video);
       this.state.conn.send(chunk);
     });
+  }
+
+  readFile(file, callback, offset = 0, videoStop) {
+    var that = this;
+
+    const BLOB_SIZE = 16384;
+    if (videoStop) {
+      return;
+    }
+
+    const reader = new window.FileReader();
+    console.log('file size is', file.size);
+
+    reader.onload = (e) => {
+      callback(e.target.result);
+      if (offset + e.target.result.byteLength < file.size) {
+        // Read the next chunk as soon as the call stack is clear
+        window.setTimeout(that.readFile, 0, file, callback, offset + BLOB_SIZE, that.state.videoStop);
+      }
+    };
+
+    const slice = file.slice(offset, offset + BLOB_SIZE);
+    reader.readAsArrayBuffer(slice);
   }
 
   sendAudio(file) {

@@ -45,10 +45,6 @@ io.on('connection', (socket) => {
     io.emit('add media', files);
   });
 
-  socket.on('request files', () => {
-    socket.emit('send files', files);
-  });
-
   // Chat messaging events
   socket.on('chat message', (msg, roomId) => {
     console.log('MSG: ', msg);

@@ -2,7 +2,11 @@ const BLOB_SIZE = 16384;
 
 // Reads in the specified file in chunks determined by BLOB_SIZE.
 // Repeatedly invokes the specified callback when each successive chunk is read (as an ArrayBuffer).
-function readFile(file, callback, offset = 0) {
+function readFile(file, callback, offset = 0, videoStop) {
+  if (videoStop) {
+    return;
+  }
+
   const reader = new window.FileReader();
   console.log('file size is', file.size);
 
