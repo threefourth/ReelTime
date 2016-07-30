@@ -26,6 +26,7 @@ class App extends React.Component {
     this.sendAudio = this.sendAudio.bind(this);
     this.sendImage = this.sendImage.bind(this);
     this.readFile = this.readFile.bind(this);
+    this.handleFileSwitch = this.handleFileSwitch.bind(this);
 
     const params = new URLSearchParams(location.search.slice(1));
     const isSource = !params.has('id');
@@ -34,6 +35,8 @@ class App extends React.Component {
       isSource,
       file: {type: ''},
       newFileUploaded: false,
+      switchFile: false,
+      arrayBufferFile: null,
       videoStop: false,
       myId: null,
       peerId: params.get('id'),
@@ -56,17 +59,31 @@ class App extends React.Component {
 
     this.props.socket.on('media update', (filler) => {
       console.log('sending file from source now');
-      if (that.state.file.type === 'video/mp4') {
+      if (that.state.file.type.slice(0, 5) === 'video') {
         that.sendVideo(that.state.file);
-      } else if (that.state.file.type === 'audio/mp3') {
+      } else if (that.state.file.type.slice(0, 5) === 'audio') {
         that.sendAudio(that.state.file);
-      } else if (that.state.file.type === 'image/jpeg' || that.state.file.type === 'image/png') {
+      } else if (that.state.file.type.slice(0, 5) === 'image') {
         that.sendImage(that.state.file);
       }
       that.setState({
         newFileUploaded: false
       });
     });
+
+    this.props.socket.on('media switch', (filler) => {
+      console.log('sending arrayBufferfile from source now');
+      if (that.state.file.type === 'video') {
+        that.sendVideo(that.state.arrayBufferFile);
+      } else if (that.state.file.type === 'audio') {
+        that.sendAudio(that.state.arrayBufferFile);
+      } else if (that.state.file.type === 'image') {
+        that.sendImage(that.state.arrayBufferFile);
+      }
+      that.setState({
+        switchFile: false
+      })
+    })
   }
 
   componentDidUpdate() {
@@ -75,6 +92,8 @@ class App extends React.Component {
       console.log('App - componentDidUpdate - inside newFileUploaded option');
       console.log('new filetype is:', this.state.file.type.slice(0, 5));
       this.props.socket.emit('newFile', this.state.file.type.slice(0, 5));
+    } else if (this.state.switchFile) {
+      this.props.socket.emit('switchFile', this.state.file.type);
     }
   }
 
@@ -83,31 +102,36 @@ class App extends React.Component {
     const filename = file.name;
     const filetype = file.type.slice(0, 5);
 
-    this.props.socket.emit('add media', filename, filetype);
+    this.props.socket.emit('add media', filename, filetype, file);
+
+    // if (this.state.isSource === false) {
+    //   this.props.socket.emit('change source', 'filler');
+    // }
 
     if (this.state.file.type.slice(0, 5) === 'video') {
       this.setState({
         file,
         newFileUploaded: true,
+        // isSource: true,
         videoStop: true
       })
     } else {
       this.setState({
         file,
         newFileUploaded: true
+        // isSource: true
       });
     }
   }
 
-  sendVideo(file) {
-    // Read in the file from disk.
-    // For each chunk, append it to the local MediaSource and send it to the other peer
-    
-    const video = document.querySelector('.video');
-    this.readFile(file, (chunk) => {
-      appendChunk(chunk, video);
-      this.state.conn.send(chunk);
-    });
+  handleFileSwitch(fileAndType) {
+    // file is of type ArrayBuffer
+    console.log('-----File-----: ', fileAndType.file);
+    this.setState({
+      file: {type: fileAndType.type},
+      arrayBufferFile: fileAndType.file,
+      switchFile: true
+    })
   }
 
   readFile(file, callback, offset = 0, videoStop) {
@@ -133,23 +157,45 @@ class App extends React.Component {
     reader.readAsArrayBuffer(slice);
   }
 
+  sendVideo(file) {
+    // Read in the file from disk.
+    // For each chunk, append it to the local MediaSource and send it to the other peer
+
+    const video = document.querySelector('.video');
+    this.readFile(file, (chunk) => {
+      appendChunk(chunk, video);
+      this.state.conn.send(chunk);
+    });
+  }
+
   sendAudio(file) {
     const audio = document.querySelector('.audio');
-
     this.state.conn.send(file);
-    console.log('file in App sendAudio:', file);
-    audio.src = window.URL.createObjectURL(file);
-    console.log('audio src in App is:', audio.src);
 
-    // readAudioFile(file, (audioData) => {
-    //   decodeSong(audioData, audio);
-    // });
+    if (file.constructor === ArrayBuffer) {
+      const dataView = new Uint8Array(file);
+      const dataBlob = new Blob([dataView]);
+      console.log('datablob in App sendAudio:', dataBlob);
+      audio.src = window.URL.createObjectURL(dataBlob);
+      console.log('audio src in App is:', audio.src);
+    } else {
+      audio.src = window.URL.createObjectURL(file);
+    }
   }
 
   sendImage(file) {
     const image = document.querySelector('.image');
     this.state.conn.send(file);
-    image.src = window.URL.createObjectURL(file);
+
+    if (file.constructor === ArrayBuffer) {
+      const dataView = new Uint8Array(file);
+      const dataBlob = new Blob([dataView]);
+      console.log('datablob in App sendImage:', dataBlob);
+      image.src = window.URL.createObjectURL(dataBlob);
+      console.log('image src in App is:', image.src);
+    } else {
+      image.src = window.URL.createObjectURL(file);
+    }
   }
 
   startApp() {
@@ -184,7 +230,7 @@ class App extends React.Component {
         {this.state.showLanding ? <Landing startApp={this.startApp} /> : null}
         {this.state.showLink ? <Link myId={this.state.myId} /> : null}
         {this.state.showBody ? <div className="wrapper">
-          <Library socket={this.props.socket} setFile={this.setFile} />
+          <Library socket={this.props.socket} setFile={this.setFile} handleFileSwitch={this.handleFileSwitch} />
           <Main socket={this.props.socket} fileType={this.state.file.type.slice(0, 5)} isSource={this.state.isSource} peerId={this.state.peerId} />
           <ChatSpace socket={this.props.socket} isSource={this.state.isSource} peerId={this.state.peerId} />
         </div> : null}
