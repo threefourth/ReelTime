@@ -82,7 +82,11 @@ io.on('connection', (socket) => {
   socket.on('media switch', (filler) => {
     console.log('media switch command recieved');
     socket.broadcast.emit('media switch', filler);
-  })
+  });
+
+  socket.on('test', (filler) => {
+    console.log('this is a test');
+  });
 });
 
 

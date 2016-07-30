@@ -769,16 +769,6 @@ body {
   background-color: rgba(224,122,122,0.4);
   color: #ccc;
   margin: auto;
-  transition: background-color 1s;
-}
-
-.landing-circle:hover {
-  background-color: rgba(224,122,122,0.7);
-  transition: background-color 1s;
-}
-
-.landing-circle:focus {
-  outline: none;
 }
 
 .drop-box {

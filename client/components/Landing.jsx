@@ -13,7 +13,7 @@ const Landing = (props) => (
       <div className="container">
         <div className="intro-text">
           <div className="intro-lead-in">Watch TV with your friends</div>
-          <div className="intro-heading">But in your underwear</div>
+          <div className="intro-heading">But in your underpants</div>
           <p className="landing-drop-text landing-circle">
             <button className="landing-circle" onClick={props.startApp}>Let's Get Started!</button>
           </p>
@@ -25,7 +25,7 @@ const Landing = (props) => (
         <div className="row">
           <div className="col-lg-12 text-center">
             <h2 className="section-heading">About ReelTime</h2>
-            <h3 className="section-subheading text-muted">The best video watching experience... in your underwear.</h3>
+            <h3 className="section-subheading text-muted">The best multimedia entertainment experience... in your underpants.</h3>
           </div>
         </div>
         <div className="row text-center">
@@ -35,7 +35,7 @@ const Landing = (props) => (
               <i className="fa fa-users fa-stack-1x fa-inverse"></i>
             </span>
             <h4 className="service-heading">Peer-to-peer</h4>
-            <p className="text-muted">No need for a centralized, bandwidth-heavy, insecure server. ReelTime uses direct peer-to-peer connections, sending video directly from one client to another.</p>
+            <p className="text-muted">No need for a centralized, bandwidth-heavy, insecure server. ReelTime uses direct peer-to-peer connections, sending media content directly from one client to another.</p>
           </div>
           <div className="col-md-4">
             <span className="fa-stack fa-4x">
@@ -43,7 +43,7 @@ const Landing = (props) => (
               <i className="fa fa-laptop fa-stack-1x fa-inverse"></i>
             </span>
             <h4 className="service-heading">Watch with friends</h4>
-            <p className="text-muted">Enjoy your favorite (legally-acquired) shows and movies with your friends, over video and text chat.</p>
+            <p className="text-muted">Enjoy your favorite movies, music, and pictures with your friends, over video and text chat.</p>
           </div>
           <div className="col-md-4">
             <span className="fa-stack fa-4x">
@@ -61,7 +61,7 @@ const Landing = (props) => (
         <div className="row">
           <div className="col-lg-12 text-center">
             <h2 className="section-heading">Our Amazing Team</h2>
-            <h3 className="section-subheading text-muted">Meet the ReelTime Greenfield Project Team</h3>
+            <h3 className="section-subheading text-muted">Meet the ReelTime Legacy Project Team</h3>
           </div>
         </div>
 

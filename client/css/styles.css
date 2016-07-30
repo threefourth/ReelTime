@@ -17,6 +17,7 @@ html, body, #app, .wrapper {
   width: 90%;
   max-height: 100vh;
 }
+
 .video-container {
   flex: 1;
   display: flex;
@@ -160,7 +161,8 @@ form {
   border-radius: 59%;
   background-color: rgba(224,122,122,0.4);
   color: #ccc;
-  margin: 0 auto;
+  margin-left: 30px;
+  margin-bottom: 40px;
 }
 
 .library-drop-box {
