@@ -15,7 +15,7 @@ const Landing = (props) => (
           <div className="intro-lead-in">Watch TV with your friends</div>
           <div className="intro-heading">But in your underwear</div>
           <p className="landing-drop-text landing-circle">
-            <button onClick={props.startApp}>Let's Get Started!</button>
+            <button className="landing-circle" onClick={props.startApp}>Let's Get Started!</button>
           </p>
         </div>
       </div>
