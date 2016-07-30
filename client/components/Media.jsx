@@ -114,6 +114,16 @@ class Media extends React.Component {
               audio.src = window.URL.createObjectURL(dataBlob);
             }
 
+          } else if (that.state.fileType === 'image') {
+            console.log('EPC filetype image');
+            const image = document.querySelector('.image');
+            console.log('DATA INSIDE THIS.STATE.FILETYPE IS', data);
+            if (data.constructor === ArrayBuffer) {
+              const dataView = new Uint8Array(data);
+              const dataBlob = new Blob([dataView]);
+              console.log('dataBlob is', dataBlob);
+              image.src = window.URL.createObjectURL(dataBlob);
+            }
           }
 
         }
@@ -130,7 +140,7 @@ class Media extends React.Component {
     } else {
       fileType = this.state.fileType;
     }
-    
+
     console.log('fileType in Media component', fileType);
 
     let mediaTag;
@@ -163,6 +173,12 @@ class Media extends React.Component {
           </audio>
           <div className="audio-border"></div>
         </div>
+    } else if (fileType === 'image') {
+      mediaTag = 
+      <div className="image-container">
+        <div className="image-border"></div>
+          <img className="image"></img>
+      </div>
     }
 
     return (
